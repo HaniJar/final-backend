@@ -1,0 +1,90 @@
+GET http://localhost:3400/products
+
+
+
+###
+
+
+GET http://localhost:3400/products/622761907ea02b0d827c6280
+
+
+###
+
+
+POST http://localhost:3400/products 
+Content-Type: application/json
+
+{
+    "title": "Rare Candy",
+    "price": 330,
+    "category": "Pokémon Items",
+    "img": "https://i.postimg.cc/qq0JGX0d/rare-candy.jpg",
+    "description": "Using a Rare Candy on a Pokémon raises the Pokémon's level by 1, ending up with the minimum amount of Experience Points of that level after leveling up. It also raises the Pokémon's friendship by a little."
+}
+
+
+
+###
+
+
+DELETE http://localhost:3400/products/6228708343165ede13a49f43
+###
+
+
+
+PATCH http://localhost:3400/products
+Content-Type: application/json
+
+{
+    
+}
+
+
+###
+
+
+
+GET http://localhost:3400/users
+
+###
+POST http://localhost:3400/users/signin
+Content-Type:application/json
+
+{
+    "fullname": "karl",
+    "password": "jacobs"
+}
+
+###
+POST http://localhost:3400/users/signup
+Content-Type: application/json
+
+{   
+    "fullname": "karl",
+    "password": "jacobs",
+    "email": "mrbeast@gmail.com",
+    "phone_number":"0258589303"
+    
+}
+
+###
+
+
+DELETE http://localhost:3400/users/
+Content-Type: application/json
+
+###
+
+GET http://localhost:3400/cart
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMWYzYTY2YmUwMWZjYzNjNTU1ZDQ0MSIsImlhdCI6MTY0NjIxMzc2MCwiZXhwIjoxNjQ2MzAwMTYwfQ.1INNIpyb0l6RSHZTZGx3dP0feZQiTOYQDkLHpXJ-nnE
+
+
+###
+
+DELETE http://localhost:3400/cart/621dcb4971c20aee2b47cb6b
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMWYzYTY2YmUwMWZjYzNjNTU1ZDQ0MSIsImlhdCI6MTY0NjIxMzc2MCwiZXhwIjoxNjQ2MzAwMTYwfQ.1INNIpyb0l6RSHZTZGx3dP0feZQiTOYQDkLHpXJ-nnE
+
+###
+
+POST http://localhost:3400/cart/621dcb4971c20aee2b47cb6b
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMWYzYTY2YmUwMWZjYzNjNTU1ZDQ0MSIsImlhdCI6MTY0NjIxMzc2MCwiZXhwIjoxNjQ2MzAwMTYwfQ.1INNIpyb0l6RSHZTZGx3dP0feZQiTOYQDkLHpXJ-nnE
