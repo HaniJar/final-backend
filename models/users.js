@@ -1,4 +1,8 @@
 const mongoose = require("mongoose");
+const ROLE = {
+  CUSTOMER: "customer",
+  ADMIN: "admin",
+};
 
 const userSchema = new mongoose.Schema({
   fullname: {
@@ -26,6 +30,11 @@ const userSchema = new mongoose.Schema({
     type: Array,
     required: false,
     default: [],
+  },
+  roles: {
+    type: String,
+    required: true,
+    default: ROLE.CUSTOMER,
   },
 });
 

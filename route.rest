@@ -5,7 +5,7 @@ GET http://localhost:3400/products
 ###
 
 
-GET http://localhost:3400/products/622761907ea02b0d827c6280
+GET http://localhost:3400/products/622762227ea02b0d827c6282
 
 
 ###
@@ -28,6 +28,8 @@ Content-Type: application/json
 
 
 DELETE http://localhost:3400/products/6228708343165ede13a49f43
+
+
 ###
 
 
@@ -44,7 +46,12 @@ Content-Type: application/json
 
 
 
-GET http://localhost:3400/users
+PATCH http://localhost:3400/users/6228991743165ede13a49f51
+Content-Type: application/json
+
+{
+    "roles": "admin"
+}
 
 ###
 POST http://localhost:3400/users/signin
@@ -60,10 +67,11 @@ POST http://localhost:3400/users/signup
 Content-Type: application/json
 
 {   
-    "fullname": "karl",
-    "password": "jacobs",
-    "email": "mrbeast@gmail.com",
-    "phone_number":"0258589303"
+    "fullname": "kyle",
+    "password": "mcbby",
+    "email": "kylemcb.24@gmail.com",
+    "phone_number":"0769815243",
+    "roles": "ROLE.ADMIN"
     
 }
 

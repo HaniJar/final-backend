@@ -70,10 +70,8 @@ router.post("/signin", async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
-router.patch("/:id", [getUser, verifyToken], async (req, res) => {
-  if (req.params.id != req.userId) {
-    return res.status(401).send({ message: "Unauthorized!" });
-  }
+
+router.patch("/:id", getUser, async (req, res) => {
   if (req.body.fullname != null) {
     res.user.fullname = req.body.fullname;
   }
@@ -86,8 +84,8 @@ router.patch("/:id", [getUser, verifyToken], async (req, res) => {
   if (req.body.phone_number != null) {
     res.user.phone_number = req.body.phone_number;
   }
-  if (req.body.join_date != null) {
-    res.user.join_date = req.body.join_date;
+  if (req.body.roles != null) {
+    res.user.roles = req.body.roles;
   }
   try {
     const updatedUser = await res.user.save();
