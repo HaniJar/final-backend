@@ -12,6 +12,9 @@ db.once("open", () => console.log("Connected to Database"));
 
 app.use(express.json());
 app.use(cors());
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to Haniah's Pokémart! ≧◡≦" });
+});
 
 const productsRouter = require("./routes/product");
 const usersRouter = require("./routes/user");
