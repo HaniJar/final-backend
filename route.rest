@@ -34,11 +34,11 @@ DELETE http://localhost:3400/products/6228708343165ede13a49f43
 
 
 
-PUT http://localhost:3400/products
+PATCH http://localhost:3400/products/6228528643165ede13a49f32
 Content-Type: application/json
 
 {
-    
+   "img": "https://i.postimg.cc/05n2yPtc/squirtle.jpg" 
 }
 
 
