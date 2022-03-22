@@ -18,7 +18,7 @@ Content-Type: application/json
     "title": "Rare Candy",
     "price": 330,
     "category": "Pokémon Items",
-    "img": "https://i.postimg.cc/qq0JGX0d/rare-candy.jpg",
+    "img": "https://i.postimg.cc/nrQswR14/rare-candie.png",
     "description": "Using a Rare Candy on a Pokémon raises the Pokémon's level by 1, ending up with the minimum amount of Experience Points of that level after leveling up. It also raises the Pokémon's friendship by a little."
 }
 
@@ -34,11 +34,11 @@ DELETE http://localhost:3400/products/6228708343165ede13a49f43
 
 
 
-PATCH http://localhost:3400/products/6228528643165ede13a49f32
+PATCH http://localhost:3400/products/6228553743165ede13a49f38
 Content-Type: application/json
 
 {
-   "img": "https://i.postimg.cc/05n2yPtc/squirtle.jpg" 
+   "img": "https://i.postimg.cc/TYNdWqqG/mew2.jpg" 
 }
 
 
