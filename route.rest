@@ -34,7 +34,7 @@ DELETE http://localhost:3400/products/6228708343165ede13a49f43
 
 
 
-PATCH http://localhost:3400/products
+PUT http://localhost:3400/products
 Content-Type: application/json
 
 {
@@ -46,31 +46,31 @@ Content-Type: application/json
 
 
 
-PATCH http://localhost:3400/users/6228991743165ede13a49f51
+PUT  http://localhost:3400/users/
 Content-Type: application/json
 
 {
-    "roles": "admin"
+    
 }
 
 ###
-POST http://localhost:3400/users/signin
+POST http://localhost:3400/users
 Content-Type:application/json
 
 {
-    "fullname": "karl",
-    "password": "jacobs"
+    "email": "jardienhaniah@gmail.com",
+    "password": "1230"
 }
 
 ###
-POST http://localhost:3400/users/signup
+POST http://localhost:3400/users
 Content-Type: application/json
 
 {   
-    "fullname": "kyle",
-    "password": "mcbby",
-    "email": "kylemcb.24@gmail.com",
-    "phone_number":"0769815243",
+    "fullname": "haniah",
+    "password": "1230",
+    "email": "jardienhaniah@gmail.com",
+    "phone_number":"0659365051",
     "roles": "ROLE.ADMIN"
     
 }
@@ -78,7 +78,7 @@ Content-Type: application/json
 ###
 
 
-DELETE http://localhost:3400/users/
+DELETE http://localhost:3400/users/62399e763b4f1fa60873bfe1
 Content-Type: application/json
 
 ###

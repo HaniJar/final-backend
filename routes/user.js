@@ -1,137 +1,177 @@
 const express = require("express");
-const router = express.Router();
 const User = require("../models/users");
-const bcrypt = require("bcrypt");
+const router = express.Router();
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const verifyToken = require("../middleware/authJwt");
+const { getUser } = require("../middleware/finders");
+const nodemailer = require("nodemailer");
 
+// GET all users (works)
 router.get("/", async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
   }
 });
 
-router.get("/:id", getUser, (req, res) => {
-  res.json(res.user);
+// GET one user (works)
+router.get("/:id", getUser, (req, res, next) => {
+  res.send(res.user);
 });
 
-router.post("/signup", DuplicatedUsernameorEmail, async (req, res, next) => {
-  try {
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
-    const user = new User({
-      fullname: req.body.fullname,
-      email: req.body.email,
-      password: hashedPassword,
-      phone_number: req.body.phone_number,
-    });
-    const newUser = await user.save();
-    res.status(201).json(newUser);
-    // console.log(salt)
-    // console.log(hashedPassword)
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+// SIGN-IN user with email & password
+router.patch("/", async (req, res, next) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
 
-router.post("/signin", async (req, res) => {
-  try {
-    User.findOne({ fullname: req.body.fullname }, (err, user) => {
-      if (err) return handleError(err);
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
-      let passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
+  if (!user) res.status(404).json({ message: "Could not find user" });
+  if (await bcrypt.compare(password, user.password)) {
+    try {
+      const ACCESS_TOKEN_SECRET = jwt.sign(
+        JSON.stringify(user),
+        process.env.ACCESS_TOKEN_SECRET
       );
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!",
-        });
-      }
-      let token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: 86400, // 24 hours
-      });
-      res.status(200).send({
-        id: user.id,
-        fullname: user.fullname,
-        email: user.email,
-        password: user.password,
-        phone_number: user.phone_number,
-        accessToken: token,
-      });
-    });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+      res.status(201).json({ jwt: ACCESS_TOKEN_SECRET });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  } else {
+    res
+      .status(400)
+      .json({ message: "Email and password combination do not match" });
   }
 });
 
-router.patch("/:id", getUser, async (req, res) => {
-  if (req.body.fullname != null) {
-    res.user.fullname = req.body.fullname;
+// REGISTER user (works)
+router.post("/", async (req, res, next) => {
+  const { fullname, email, phone_number, password } = req.body;
+
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  const user = new User({
+    fullname,
+    email,
+    phone_number,
+    password: hashedPassword,
+  });
+
+  try {
+    const newUser = await user.save();
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Signup Successful!",
+      text: `Thank you ${fullname}, your Signup was successful. `,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+
+    try {
+      const ACCESS_TOKEN_SECRET = jwt.sign(
+        JSON.stringify(newUser),
+        process.env.ACCESS_TOKEN_SECRET
+      );
+      res.status(201).json({ jwt: ACCESS_TOKEN_SECRET });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
-  if (req.body.email != null) {
-    res.user.email = req.body.email;
+});
+
+// UPDATE a user (works)
+router.put("/:id", getUser, async (req, res, next) => {
+  const { fullname, phone_number, password, role } = req.body;
+  if (fullname) res.user.fullname = fullname;
+  if (phone_number) res.user.phone_number = phone_number;
+  if (password) {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+    res.user.password = hashedPassword;
   }
-  if (req.body.password != null) {
-    res.user.password = req.body.password;
-  }
-  if (req.body.phone_number != null) {
-    res.user.phone_number = req.body.phone_number;
-  }
-  if (req.body.roles != null) {
-    res.user.roles = req.body.roles;
-  }
+  if (role) res.user.role = role;
+
   try {
     const updatedUser = await res.user.save();
-    res.json(updatedUser);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: res.user.email,
+      subject: "Updated your account Successfully!",
+      text: `Thank you ${res.user.fullname}, we have updated your account successfully. `,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+    res.status(201).send(updatedUser);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
 
+// DELETE a user
 router.delete("/:id", getUser, async (req, res) => {
+  const { fullname, email } = res.user;
   try {
     await res.user.remove();
-    res.json({ message: "Deleted User" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: "Removed account Successfully!",
+      text: `Your account has been removed succesfully, thank you ${fullname}, for your loyalty thus far.`,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+
+    res.json({ message: "Deleted user" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
-
-async function getUser(req, res, next) {
-  let user;
-  try {
-    user = await User.findById(req.params.id);
-    if (user == null) {
-      return res.status(404).json({ message: "Cannot find User" });
-    }
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-
-  res.user = user;
-  next();
-}
-
-async function DuplicatedUsernameorEmail(req, res, next) {
-  let user;
-
-  try {
-    user = await User.findOne({ fullname: req.body.fullname });
-    email = await User.findOne({ email: req.body.email });
-    if (user || email) {
-      return res.status(404).send({ message: "username already exists" });
-    }
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-  next();
-}
 
 module.exports = router;

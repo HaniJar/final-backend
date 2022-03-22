@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
+
 const ROLE = {
-  CUSTOMER: "customer",
   ADMIN: "admin",
+  CUSTOMER: "customer",
 };
 
 const userSchema = new mongoose.Schema({
@@ -12,29 +13,30 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
+  },
+  phone_number: {
+    type: String,
+    required: true,
   },
   password: {
     type: String,
     required: true,
   },
-
-  phone_number: {
-    type: Number,
-    required: true,
-  },
-  join_date: {
+  role: {
     type: String,
+    required: true,
+    default: ROLE.CUSTOMER,
+  },
+  joinDate: {
+    type: Date,
+    required: true,
     default: Date.now,
   },
   cart: {
     type: Array,
     required: false,
     default: [],
-  },
-  roles: {
-    type: String,
-    required: true,
-    default: ROLE.CUSTOMER,
   },
 });
 
