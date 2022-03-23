@@ -22,7 +22,7 @@ router.get("/:id", getUser, (req, res, next) => {
 });
 
 // SIGN-IN user with email & password
-router.patch("/", async (req, res, next) => {
+router.patch("/signin", async (req, res, next) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
@@ -45,7 +45,7 @@ router.patch("/", async (req, res, next) => {
 });
 
 // REGISTER user (works)
-router.post("/", async (req, res, next) => {
+router.post("/signup", async (req, res, next) => {
   const { fullname, email, phone_number, password } = req.body;
 
   const salt = await bcrypt.genSalt();
