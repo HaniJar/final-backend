@@ -27,6 +27,7 @@ router.patch("/signin", async (req, res, next) => {
   const user = await User.findOne({ fullname });
 
   if (!user) res.status(404).json({ message: "Cannot find user" });
+  z;
   if (await bcrypt.compare(password, user.password)) {
     try {
       const ACCESS_TOKEN_SECRET = jwt.sign(
