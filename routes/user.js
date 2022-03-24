@@ -23,10 +23,10 @@ router.get("/:id", getUser, (req, res, next) => {
 
 // SIGN-IN user with email & password
 router.patch("/signin", async (req, res, next) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const { fullname, password } = req.body;
+  const user = await User.findOne({ fullname });
 
-  if (!user) res.status(404).json({ message: "Could not find user" });
+  if (!user) res.status(404).json({ message: "Cannot find user" });
   if (await bcrypt.compare(password, user.password)) {
     try {
       const ACCESS_TOKEN_SECRET = jwt.sign(
@@ -40,7 +40,7 @@ router.patch("/signin", async (req, res, next) => {
   } else {
     res
       .status(400)
-      .json({ message: "Email and password combination do not match" });
+      .json({ message: "Username and password combination do not match" });
   }
 });
 
